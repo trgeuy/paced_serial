@@ -1,1 +1,1 @@
-# paced_serial
+# paced-serial
