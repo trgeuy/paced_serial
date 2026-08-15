@@ -16,15 +16,11 @@ Register the MCP Server with Claude - plugin and mirror (rw mode) enabled
 
 Using the MCP Server:
 
-Once the MCP serv er is registered, start Claude as normal. If you have already registered the MCP server in a prior session it sometimes stays registered between sessions but I have not nailed down the pattern yet. If it is already registered you will get an error. If you need to change the options, it appears you need to use 'claude mcp remove serial' to remove it and then reregister. If in doubt, using 'claude mcp list' will tell you what MCP servers are registered. The folder you are in defines the project origin for Claude when it is started. I believe at this point that registration is relative to the project. I'm sure there is a way to make it global, but have yet to figure it out.
+Once the MCP server is registered, start Claude as normal. If you have already registered the MCP server in a prior session it sometimes stays registered between sessions but I have not nailed down the pattern yet. If it is already registered you will get an error. If you need to change the options, it appears you need to use 'claude mcp remove serial' to remove it and then reregister. If in doubt, using 'claude mcp list' will tell you what MCP servers are registered. The folder you are in defines the project origin for Claude when it is started. I believe at this point that registration is relative to the project. I'm sure there is a way to make it global, but have yet to figure it out.
 
-Register MCP Server with Claude - plugin and mirror (rw mode) enabled:
+Registing MCP Server with Claude - plugin and mirror (rw mode) enabled:
 
 	claude mcp add serial -e SERIAL_MCP_PLUGINS=paced_serial SERIAL_MCP_MIRROR=rw -- serial_mcp
-
-Start CLaude:
-
-	claude
 
 Tell Claude to connect to your USB serial adapter:
 
@@ -32,11 +28,10 @@ Tell Claude to connect to your USB serial adapter:
 
 Connecting the the PTY Mirror:
 
-I use VOC9 in VT52 emulation as this is how I have my UCSD Pascl system configured. In this situation, the screen has to be 80x24 otherwise the terminal emulation gets confused. Connect to /tmp/serial-mcp0 once PTY Mirror is active. It becomes active after Claude has connected to the USB Serial device.
+Connect to /tmp/serial-mcp0 once PTY Mirror is active. It becomes active after Claude has connected to the USB Serial device.
 
-The paced serial plugin is used to slow down the character stream if you notice dropped characters. Start by telling Claude to test for drops. He sends a stream of characters and compares what he gets back. Then he set's what works and uses the paced.write tool from there on in place of the MCP's built in write. There are two gaps, inter character and inter line, to allow for "I can't process characters arriving at 9600 baud" and "I need time to process a new line before I can accept more input". Think of the seconnd as a way to handle pasting a text file of a Basic program into MBASIC.
+The paced serial plugin is used to slow down the character stream if you notice dropped characters. Start by telling Claude to test for drops. It sends a stream of characters and compares what it gets back. Then it set's what works and uses the paced.write tool from there on in place of the MCP's built in write. There are two gaps, inter character and inter line, to allow for "I can't process characters arriving at 9600 baud" and "I need time to process a new line before I can accept more input". Think of the second as a way to handle pasting a text file of a Basic program into MBASIC.
 
-Note: The MCP I've been using only supports the PTY Mirror on MacOS and Linux. I don't know if this is the result a Windows limitation or if the author didn't choose to add this feature.
+Note: The MCP this is designed for only supports the PTY Mirror on MacOS and Linux.
 
 Note: This should work with any AI application that supports MCP, just don't ask me how.
-
