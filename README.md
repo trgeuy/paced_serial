@@ -1,6 +1,6 @@
 # Paced Serial Plugin
 
-This is a plugin that was created for use with the Serial MCP Server found here
+This is a plugin that was created using Claude for use with the Serial MCP Server found here
 
 https://github.com/es617/serial-mcp-server
 
