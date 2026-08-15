@@ -10,6 +10,8 @@ The plugin works with this Serial MCP Server:
 
 Usage:
 
+Install the server listed above and then copy the plugin script to ~/.serial_mcp/plugins/ so that the MCP server can find it. This location may be different on Windows, so please read the documentation for the MCP server as I hasve only tested this on MacOS.
+
 Register the MCP Server with Claude - plugin and mirror (rw mode) enabled
 
 	claude mcp add serial -e SERIAL_MCP_PLUGINS=paced_serial SERIAL_MCP_MIRROR=rw -- serial_mcp
