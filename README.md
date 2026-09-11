@@ -1,15 +1,50 @@
 # Paced Serial Plugin
 
-This is a plugin that was created using Claude for use with the Serial MCP Server found here
+This plugin adds character-pacing tools to the Serial MCP Server:
 
 https://github.com/es617/serial-mcp-server
 
-It is needed when using Claude to interact with vintage computers over a serial connection. Many of these older systems have no handshaking on their serial ports and cannot process a raw stream of data at even moderate baud rates without dropping characters. The plug in adds the following 4 tools to the base MCP server.
+Many vintage computers have no handshaking on their serial ports. At even
+moderate baud rates, they drop characters from a raw data stream. This
+plugin adds a short, configurable gap between characters, the same way many
+terminal emulators do.
 
-paced.configure — set/get per-connection default inter_char_gap_ms / eol_gap_ms, so you don't have to pass them on every write once you've found your device's numbers (e.g. 1.5ms / 10ms for your 9600-baud case).
+## Want the pacing built in, with no plugin install?
 
-paced.write — writes byte-by-byte with the inter-character gap, and applies the (separate, larger) end-of-line gap exactly once after a full CR or CR/LF is sent — not mid-sequence, and not doubled for CR/LF. Falls back to paced.configure defaults if gaps aren't specified per-call.
+Use our fork of the Serial MCP Server instead:
 
-paced.calibrate — one measurement: sends known test lines at a candidate gap setting, waits for the echo to go quiet (not just the first chunk — it polls until there's been silence for quiet_ms), then diffs sent vs. received bytes using difflib and reports dropped/inserted/substituted byte counts plus a clean verdict.
+https://github.com/trgeuy/serial-mcp-server
 
-paced.sweep — runs calibrate across a set of candidate gaps (cartesian product of your inter-char and eol lists, or paired lists via pairwise=true), flushing and settling between attempts, and returns every result plus the smallest clean combination found — this is the "run tests that the gaps are tuned" piece.
+The fork includes this plugin's tools as a native, built-in feature (set
+`SERIAL_MCP_PACED=1`). It also adds a TCP mirror transport, exclusive
+write-locking for multi-step command sequences, and other fixes for
+vintage-hardware use. Use this plugin only if you want the tools as a
+separate add-on for the original, unforked server.
+
+## Tools
+
+This plugin adds four tools to the base MCP server.
+
+**`paced.configure`**
+Sets or reads the default `inter_char_gap_ms` and `eol_gap_ms` for a
+connection. Set these once, then skip them on every later `paced.write`
+call. Example: 1.5 ms / 10 ms for a 9600-baud connection.
+
+**`paced.write`**
+Writes data one byte at a time, with the configured gap between characters.
+It applies the (larger) end-of-line gap once, after a full CR or CR/LF. It
+does not double the gap for CR/LF. If you do not pass gap values, it uses
+the `paced.configure` defaults.
+
+**`paced.calibrate`**
+Tests one gap setting. It sends known test lines, waits for the echo to go
+quiet, then compares the sent and received bytes with `difflib`. It reports
+the counts of dropped, inserted, and substituted bytes, and a pass/fail
+verdict.
+
+**`paced.sweep`**
+Runs `paced.calibrate` across a set of candidate gaps. Pass separate
+inter-char and EOL gap lists to test every combination, or set
+`pairwise=true` to test them as matched pairs. It flushes and settles the
+connection between attempts, then returns every result plus the smallest
+gap combination that passed.
